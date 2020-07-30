@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="bottomleftcluster" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="bottomleftcluster" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>D:\Games\SteamGames\steamapps\common\Risk of Rain 2\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>

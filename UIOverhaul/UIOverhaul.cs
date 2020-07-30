@@ -2,12 +2,15 @@
 using BepInEx.Logging;
 using R2API;
 using R2API.Utils;
+using RoR2;
+using UnityEngine;
 
 namespace UIOverhaul
 {
     [BepInDependency(R2API.R2API.PluginGUID)]
     [R2APISubmoduleDependency(nameof(LanguageAPI), nameof(ResourcesAPI))]
     [BepInPlugin(ModGuid, ModName, ModVer)]
+
     public class UIOverhaul : BaseUnityPlugin
     {
         private const string ModVer = "0.0.1";
@@ -20,7 +23,7 @@ namespace UIOverhaul
         {
             Logger = base.Logger;
 
-            //Assets.Init();
+            Assets.Init();
             //Hooks.Init();
         }
     }
