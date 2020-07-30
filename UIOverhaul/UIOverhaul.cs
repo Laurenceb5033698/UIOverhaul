@@ -13,6 +13,7 @@ namespace UIOverhaul
 
     public class UIOverhaul : BaseUnityPlugin
     {
+        Hooks hooks;
         private const string ModVer = "0.0.1";
         private const string ModName = "UIOverhaul";
         public const string ModGuid = "com.WaterWhen.UIOverhaul";
@@ -24,7 +25,7 @@ namespace UIOverhaul
             Logger = base.Logger;
 
             Assets.Init();
-            //Hooks.Init();
+            hooks.Init();
         }
     }
 }

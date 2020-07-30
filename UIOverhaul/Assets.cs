@@ -10,7 +10,7 @@ namespace UIOverhaul
 {
     internal static class Assets
     {
-        internal static GameObject UIBottomLeftCluster;//prefab
+        internal static GameObject UIBottomLeftCluster;//prefab, static so it's available from anywhere.
 
         private const string ModPrefix = "@UIOverhaul:";
         private const string PrefabPath = ModPrefix + "Assets/CustomHud/BottomLeftCluster.prefab";
@@ -28,22 +28,12 @@ namespace UIOverhaul
 
                 UIBottomLeftCluster = bundle.LoadAsset<GameObject>("Assets/CustomHud/BottomLeftCluster.prefab");
             }
-            
-            
+
+            //Util.PrintGameObjectChildren(UIBottomLeftCluster); //print out hierarchy to debug console when running
             
 
         }
-
-        private static void CheckBundlePrefabs()
-        {
-            var allComponents = UIBottomLeftCluster.GetComponentsInChildren<Transform>();
-            UIOverhaul.Logger.LogMessage("prefab object count: " + allComponents.Length);
-
-            foreach (Transform obj in allComponents)
-            {
-                //if (obj.name == "FullHealthText")
-                UIOverhaul.Logger.LogMessage("prefab objname: " + obj.name);
-            }
-        }
+        
+        
     }
 }
