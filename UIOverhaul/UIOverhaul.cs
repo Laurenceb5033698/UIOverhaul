@@ -24,8 +24,7 @@ namespace UIOverhaul
         {
             Logger = base.Logger;
 
-            Assets.Init();
-            Hooks.Init();
+            handler.Project.Init();
         }
     }
 }
