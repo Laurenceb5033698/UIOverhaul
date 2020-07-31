@@ -39,8 +39,8 @@ namespace UIOverhaul {
 
                     {   //HealthBar root
                         {   //Slash
-                            clusters.BLC.processComponent(clusters.BLC.getHealthbarRoot(), "Slash", "BarRoots/HealthbarRoot/Slash", "Processing Slash");
-                            // clusters.BLC.processComponent(_BLC, "Slash", "BarRoots/HealthbarRoot/Slash", "Processing Slash");  
+                            // clusters.BLC.processComponent(clusters.BLC.getHealthbarRoot(), "Slash", "BarRoots/HealthbarRoot/Slash", "Processing Slash");
+                            clusters.BLC.processComponent(_BLC, "Slash", "BarRoots/HealthbarRoot/Slash", "Processing Slash");  
                             //add any changes to text here e.g. font, size etc
                         }
                         {   //CurrentHealthText
