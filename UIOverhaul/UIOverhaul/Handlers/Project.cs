@@ -12,7 +12,7 @@ namespace UIOverhaul {
             public static void Init(){
                 Assets.Init();
 
-                Hud.Init();
+                UIHandler.Init();
             }
         }
     }

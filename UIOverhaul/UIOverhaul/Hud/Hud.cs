@@ -12,6 +12,7 @@ namespace UIOverhaul {
             public static Transform OriginalHUDroot = null;
             public static types.Theme hudTheme;
 
+            //This runs as the Game's SimpleHUD is instantiated
             public static void CustomHUDAssembly(On.RoR2.UI.HUD.orig_Awake orig, RoR2.UI.HUD self) {
                 orig(self);
                 OriginalHUDroot = self.transform;

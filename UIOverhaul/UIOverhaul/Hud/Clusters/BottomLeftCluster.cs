@@ -14,10 +14,10 @@ namespace UIOverhaul {
                 private static Transform oblc = null;
                 private static Transform oblcparent = null;
 
-                private static Transform _HealthbarRoot = null;
-                private static Transform _LevelDisplayRoot = null;
-                private static Transform _BuffDisplayRoot = null;
-                private static Transform _ExpBarRoot = null;
+                private static Transform Old_HealthbarRoot = null;
+                private static Transform Old_LevelDisplayRoot = null;
+                private static Transform Old_BuffDisplayRoot = null;
+                private static Transform Old_ExpBarRoot = null;
 
                 private static GameObject item = null;
 
@@ -28,10 +28,10 @@ namespace UIOverhaul {
 
                     //get references to some of the object parents
                     //This is mostly to reduce path length when searching for Gameobjects (reduce risk of spelling errors)
-                    _HealthbarRoot = oblcparent.Find("BarRoots/HealthbarRoot");
-                    _LevelDisplayRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/LevelDisplayRoot");
-                    _BuffDisplayRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/BuffDisplayRoot");
-                    _ExpBarRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/ExpBarRoot");
+                    Old_HealthbarRoot = oblcparent.Find("BarRoots/HealthbarRoot");
+                    Old_LevelDisplayRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/LevelDisplayRoot");
+                    Old_BuffDisplayRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/BuffDisplayRoot");
+                    Old_ExpBarRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/ExpBarRoot");
                     UIOverhaul.Logger.LogMessage("All Transform Parents found within Custom Cluster.");
                 }
 
@@ -64,18 +64,18 @@ namespace UIOverhaul {
                 }
 
                 public static Transform OriginalFind(string path){ return oblc.Find(path); }
-                public static Transform HealthbarRootFind(string path){ return _HealthbarRoot.Find(path); }
-                public static Transform LevelDisplayRootFind(string path){ return _LevelDisplayRoot.Find(path); }
-                public static Transform BuffDisplayRootFind(string path){ return _BuffDisplayRoot.Find(path); }
-                public static Transform ExpBarRootFind(string path) { return _ExpBarRoot.Find(path); }
+                public static Transform HealthbarRootFind(string path){ return Old_HealthbarRoot.Find(path); }
+                public static Transform LevelDisplayRootFind(string path){ return Old_LevelDisplayRoot.Find(path); }
+                public static Transform BuffDisplayRootFind(string path){ return Old_BuffDisplayRoot.Find(path); }
+                public static Transform ExpBarRootFind(string path) { return Old_ExpBarRoot.Find(path); }
 
                 public static Transform getOriginal(){ return oblc; }
                 public static Transform getOriginalParent(){ return oblcparent; }
 
-                public static Transform getHealthbarRoot(){ return _HealthbarRoot; }
-                public static Transform getLevelDisplayRoot(){ return _LevelDisplayRoot; }
-                public static Transform getBuffDisplayRoot(){ return _BuffDisplayRoot; }
-                public static Transform getExpBarRoot(){ return _ExpBarRoot; }
+                public static Transform getHealthbarRoot(){ return Old_HealthbarRoot; }
+                public static Transform getLevelDisplayRoot(){ return Old_LevelDisplayRoot; }
+                public static Transform getBuffDisplayRoot(){ return Old_BuffDisplayRoot; }
+                public static Transform getExpBarRoot(){ return Old_ExpBarRoot; }
                 
                 public static GameObject getItem(){ return item; }
             }

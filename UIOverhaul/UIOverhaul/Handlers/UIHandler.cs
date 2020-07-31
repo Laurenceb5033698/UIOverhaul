@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace UIOverhaul {
     namespace handler {
-        public static class Hud {
+        public static class UIHandler {
             public static void Init(){
                 //setup which theme we will be using
                 hud.Hud.hudTheme = hud.types.Theme.Design1;

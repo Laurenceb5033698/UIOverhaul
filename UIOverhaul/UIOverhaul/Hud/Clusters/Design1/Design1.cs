@@ -24,6 +24,11 @@ namespace UIOverhaul {
                     Transform _BLC = UnityEngine.Object.Instantiate<GameObject>(Assets.UIBottomLeftCluster, clusters.BLC.getOriginalParent()).transform;
                     UIOverhaul.Logger.LogMessage("Custom HUD instantiated.");
 
+                    //find referneces for new cluster
+                    Transform _HealthbarRoot = _BLC.Find("BarRoots/HealthbarRoot");
+                    Transform _LevelDisplayRoot = _BLC.Find("BarRoots/LevelDisplayCluster/LevelDisplayRoot");
+                    Transform _BuffDisplayRoot = _BLC.Find("BarRoots/LevelDisplayCluster/BuffDisplayRoot");
+                    Transform _ExpBarRoot = _BLC.Find("BarRoots/LevelDisplayCluster/ExpBarRoot");
                     //now go through each Hud item and make sure game scripts are setup accordingly.
                     //normally this is done via editor, but we don't have access to RoR2 scripts in editor ¯\_(ツ)_/¯
 
