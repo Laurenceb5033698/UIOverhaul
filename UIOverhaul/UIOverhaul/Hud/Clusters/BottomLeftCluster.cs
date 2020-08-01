@@ -10,6 +10,7 @@ using UnityEngine;
 namespace UIOverhaul {
     namespace hud {
         namespace clusters {
+            //BottomLeftCluster(BLC) dissects objects from Exisiting HUD and allows easy access to scripts for copying.
             public static class BLC {
                 private static Transform oblc = null;
                 private static Transform oblcparent = null;
@@ -19,7 +20,6 @@ namespace UIOverhaul {
                 private static Transform Old_BuffDisplayRoot = null;
                 private static Transform Old_ExpBarRoot = null;
 
-                private static GameObject item = null;
 
                 public static void Init(Transform OriginalHUDroot) {
                     oblc = OriginalHUDroot.Find("MainContainer/MainUIArea/BottomLeftCluster");  //old BottomLeftCluster transform
@@ -28,40 +28,35 @@ namespace UIOverhaul {
 
                     //get references to some of the object parents
                     //This is mostly to reduce path length when searching for Gameobjects (reduce risk of spelling errors)
-                    Old_HealthbarRoot = oblcparent.Find("BarRoots/HealthbarRoot");
-                    Old_LevelDisplayRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/LevelDisplayRoot");
-                    Old_BuffDisplayRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/BuffDisplayRoot");
-                    Old_ExpBarRoot = oblcparent.Find("BarRoots/LevelDisplayCluster/ExpBarRoot");
-                    UIOverhaul.Logger.LogMessage("All Transform Parents found within Custom Cluster.");
+                    Old_HealthbarRoot = oblc.Find("BarRoots/HealthbarRoot");
+                    Old_LevelDisplayRoot = oblc.Find("BarRoots/LevelDisplayCluster/LevelDisplayRoot");
+                    Old_BuffDisplayRoot = oblc.Find("BarRoots/LevelDisplayCluster/BuffDisplayRoot");
+                    Old_ExpBarRoot = oblc.Find("BarRoots/LevelDisplayCluster/ExpBarRoot");
+                    UIOverhaul.Logger.LogMessage("All Transform Parents found within Old Cluster.");
                 }
 
-                public static void processComponent(Transform hudComponent, string gameObjectPath, string logMessage = null) {
+                //takes a new object then finds a specific path object within BLC, then adds the HGMTP component to new obj and copies values over from old.
+                public static HGTextMeshProUGUI CopyHGTMPvalues(Transform hudComponent, string gameObjectPath, string logMessage = null) {
                     util.Log.ConsoleMessage(logMessage);
-                    item = hudComponent.gameObject;
-                    util.Component.Add(item, oblc.Find(gameObjectPath).GetComponent<HGTextMeshProUGUI>());
+                    GameObject item = hudComponent.gameObject;
+                    return util.Component.Add(item, oblc.Find(gameObjectPath).GetComponent<HGTextMeshProUGUI>());
                 }
 
-                public static void processComponent(Transform hudComponent, string gameObjectName, string gameObjectPath, string logMessage = null){
+                //takes a new object and finds child, then finds specific path to object within BLC. adds new HGTMP & copies values.
+                public static HGTextMeshProUGUI CopyHGTMPvalues(Transform hudComponent, string gameObjectName, string gameObjectPath, string logMessage = null){
                     util.Log.ConsoleMessage(logMessage);
-                    item = hudComponent.Find(gameObjectName).gameObject;
-                    util.Component.Add(item, oblc.Find(gameObjectPath).GetComponent<HGTextMeshProUGUI>());
+                    GameObject item = hudComponent.Find(gameObjectName).gameObject;
+                    return util.Component.Add(item, oblc.Find(gameObjectPath).GetComponent<HGTextMeshProUGUI>());
                 }
 
-                public static void processComponent(Transform customHud, Transform hudComponent, string gameObjectName, string gameObjectPath, string logMessage = null) {
+                //takes new item and finds child, then takes old item and finds child, then adds new HGTMP & copies values.
+                public static HGTextMeshProUGUI CopyHGTMPvalues(Transform customHudItem, Transform oldHudItem, string customObjectPath, string oldObjectPath, string logMessage = null) {
                     util.Log.ConsoleMessage(logMessage);
-                    item = hudComponent.Find(gameObjectName).gameObject;
-                    util.Component.Add(item, customHud.Find(gameObjectPath).GetComponent<HGTextMeshProUGUI>());
+                    GameObject item = customHudItem.Find(customObjectPath).gameObject;
+                    return util.Component.Add(item, oldHudItem.Find(oldObjectPath).GetComponent<HGTextMeshProUGUI>());
+
                 }
 
-                public static void setItem(Transform customHud, string logMessage = null){
-                    util.Log.ConsoleMessage(logMessage);
-                    item = customHud.Find("ChatBoxRoot").gameObject;
-                }
-
-                public static void setItem(GameObject _item, string logMessage = null){
-                    util.Log.ConsoleMessage(logMessage);
-                    item = _item;
-                }
 
                 public static Transform OriginalFind(string path){ return oblc.Find(path); }
                 public static Transform HealthbarRootFind(string path){ return Old_HealthbarRoot.Find(path); }
@@ -77,7 +72,6 @@ namespace UIOverhaul {
                 public static Transform getBuffDisplayRoot(){ return Old_BuffDisplayRoot; }
                 public static Transform getExpBarRoot(){ return Old_ExpBarRoot; }
                 
-                public static GameObject getItem(){ return item; }
             }
         }
     }

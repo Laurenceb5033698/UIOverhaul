@@ -18,6 +18,7 @@ namespace UIOverhaul {
 
         public static class Component {
             //Builds on AddComponent and allows an existing component to have it's values copied to a new component on a new GameObject
+            //Unknown if this method is problematic. I.E. could be overwriting default values, and setting pointers to objects that will be deleted.
             public static RoR2.UI.HGTextMeshProUGUI Add(this GameObject game, RoR2.UI.HGTextMeshProUGUI duplicate){
                 RoR2.UI.HGTextMeshProUGUI target = game.AddComponent<RoR2.UI.HGTextMeshProUGUI>();
                 foreach(PropertyInfo x in typeof(RoR2.UI.HGTextMeshProUGUI).GetProperties()){

@@ -21,7 +21,7 @@ namespace UIOverhaul {
 
                 //We want to chop and change the HUD layout before we call the default function.
                 //that way when we remove items and add our own, we shouldnt be missing out on default setup.
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
             }
         }
     }

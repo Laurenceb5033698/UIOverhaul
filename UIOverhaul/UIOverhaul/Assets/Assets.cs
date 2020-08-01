@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 
 namespace UIOverhaul {
+    //Loads and stores prefabs from our assetbundle. unknown if this must be done on game startup or can be done during level loading
     internal static class Assets {
         internal static GameObject UIBottomLeftCluster;//prefab, static so it's available from anywhere.
 

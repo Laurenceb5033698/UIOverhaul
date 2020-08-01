@@ -73,7 +73,7 @@ namespace UIOverhaul {
                 {   //Slash
                     UIOverhaul.Logger.LogMessage("Processing Slash");
                     item = _HealthbarRoot.Find("Slash").gameObject;
-                    util.Component.Add(item, _BLC.Find("BarRoots/HealthbarRoot/Slash").GetComponent<HGTextMeshProUGUI>());
+                    util.Component.Add(item, oblc.Find("BarRoots/HealthbarRoot/Slash").GetComponent<HGTextMeshProUGUI>());
                     //add any changes to text here e.g. font, size etc
                 }
                 {   //CurrentHealthText

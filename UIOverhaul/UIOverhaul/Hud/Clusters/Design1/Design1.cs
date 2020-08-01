@@ -10,8 +10,20 @@ namespace UIOverhaul {
     namespace hud {
         namespace clusters {
             public static class Design1 {
+                private static RoR2.UI.HUD gameHud = null;
+                private static RoR2.UI.HUDScaleController gameHudScaleController = null;
+
+                //set up Design specific clusters. Beware These may not match clusters from Original HUD if we moved them.
                 public static void SetupCluster(){
-                    SetupBottomLeftCluster();
+                    //get reference to game's HUD component
+                    gameHud = Hud.OriginalHUDroot.GetComponent<HUD>();
+                    gameHudScaleController = Hud.OriginalHUDroot.GetComponent<HUDScaleController>();
+
+                    SetupBottomLeftCluster();       //hp, xp, buffs, chat
+                    //SetupBottomRightCluster();    //skills, equipment
+                    //SetupBottomCentreCluster();   //items, popups
+                    //SetupTopRightCluster();       //Difficulty, objectives
+                    //etc
                 }
 
                 //set up HpBar, ExpBar, BuffBar, ChatBox
@@ -20,75 +32,106 @@ namespace UIOverhaul {
                     clusters.BLC.getOriginal().parent = null;
                     UIOverhaul.Logger.LogMessage("Parent disassociated.");
 
-                    //instantiate new UI cluster and set parent.
-                    Transform _BLC = UnityEngine.Object.Instantiate<GameObject>(Assets.UIBottomLeftCluster, clusters.BLC.getOriginalParent()).transform;
+                    //instantiate new UI cluster and set parent. //Design1_BottomLeftCluster
+                    Transform D1_BLC = UnityEngine.Object.Instantiate<GameObject>(Assets.UIBottomLeftCluster, clusters.BLC.getOriginalParent()).transform;
                     UIOverhaul.Logger.LogMessage("Custom HUD instantiated.");
 
                     //find referneces for new cluster
-                    Transform _HealthbarRoot = _BLC.Find("BarRoots/HealthbarRoot");
-                    Transform _LevelDisplayRoot = _BLC.Find("BarRoots/LevelDisplayCluster/LevelDisplayRoot");
-                    Transform _BuffDisplayRoot = _BLC.Find("BarRoots/LevelDisplayCluster/BuffDisplayRoot");
-                    Transform _ExpBarRoot = _BLC.Find("BarRoots/LevelDisplayCluster/ExpBarRoot");
+                    Transform D1_HealthbarRoot = D1_BLC.Find("BarRoots/HealthbarRoot");
+                    Transform D1_LevelDisplayRoot = D1_BLC.Find("BarRoots/LevelDisplayCluster/LevelDisplayRoot");
+                    Transform D1_BuffDisplayRoot = D1_BLC.Find("BarRoots/LevelDisplayCluster/BuffDisplayRoot");
+                    Transform D1_ExpBarRoot = D1_BLC.Find("BarRoots/LevelDisplayCluster/ExpBarRoot");
                     //now go through each Hud item and make sure game scripts are setup accordingly.
                     //normally this is done via editor, but we don't have access to RoR2 scripts in editor ¯\_(ツ)_/¯
-
+                    
                     {   //chatBox
-                        clusters.BLC.setItem(_BLC, "Processing ChatBoxRoot");
+                        GameObject item = D1_BLC.Find("ChatBoxRoot").gameObject;
 
-                        InstantiatePrefabOnStart tempIPOS = clusters.BLC.getItem().AddComponent<InstantiatePrefabOnStart>();
+                        InstantiatePrefabOnStart tempIPOS = item.AddComponent<InstantiatePrefabOnStart>();
                         tempIPOS.prefab = Resources.Load<GameObject>("Prefabs/ChatBox, In Run");//this should be okay
-                        tempIPOS.targetTransform = clusters.BLC.getItem().transform;
+                        tempIPOS.targetTransform = item.transform;
                         tempIPOS.copyTargetRotation = true;
                         tempIPOS.parentToTarget = true;
                     }
 
                     {   //HealthBar root
                         {   //Slash
-                            // clusters.BLC.processComponent(clusters.BLC.getHealthbarRoot(), "Slash", "BarRoots/HealthbarRoot/Slash", "Processing Slash");
-                            clusters.BLC.processComponent(_BLC, "Slash", "BarRoots/HealthbarRoot/Slash", "Processing Slash");  
+                            // I'm leaving HGTMP in as we will no doubt want to change something about the font
+                            HGTextMeshProUGUI HGTMP = BLC.CopyHGTMPvalues(D1_HealthbarRoot, BLC.getHealthbarRoot() ,"Slash", "Slash", "Processing Slash");
                             //add any changes to text here e.g. font, size etc
+                            //HGTMP.fontSize = 42;  //e.g.
                         }
                         {   //CurrentHealthText
-                            clusters.BLC.processComponent(clusters.BLC.getHealthbarRoot(), "Slash/CurrentHealthText", "BarRoots/HealthbarRoot/Slash/CurrentHealthText", "Processing CurrentHealthText");
+                            HGTextMeshProUGUI HGTMP = BLC.CopyHGTMPvalues(D1_HealthbarRoot, BLC.getHealthbarRoot(), "Slash/CurrentHealthText", "Slash/CurrentHealthText", "Processing CurrentHealthText");
                         }
                         {   //FullHealthText
-                            clusters.BLC.processComponent(clusters.BLC.getHealthbarRoot(), "Slash/FullHealthText", "BarRoots/HealthbarRoot/Slash/FullHealthText", "Processing FullHealthText");
+                            HGTextMeshProUGUI HGTMP = BLC.CopyHGTMPvalues(D1_HealthbarRoot, BLC.getHealthbarRoot(), "Slash/FullHealthText", "Slash/FullHealthText", "Processing FullHealthText");
                         }
                         //back to HealthBarRoot
-                        clusters.BLC.setItem(clusters.BLC.getHealthbarRoot().gameObject, "Processing HealthBarRoot");
-                        HealthBar tempHB = util.Component.Add(clusters.BLC.getItem(), clusters.BLC.OriginalFind("BarRoots/HealthbarRoot").GetComponent<HealthBar>());
+                        util.Log.ConsoleMessage("Processing HealthbarRoot.");
+                        //get gameobject from custom Hud HealthbarRoot
+                        GameObject item = D1_HealthbarRoot.gameObject;
+
+                        item.SetActive(false);  //temporarily disable object while adding healthbar to prevent early awake call.
+                        //use script on original HealthbarRoot to set values on new component on custom HealthbarRoot
+                        HealthBar customHB = util.Component.Add(item, BLC.getHealthbarRoot().GetComponent<HealthBar>());
 
                         //need to use references to our objects here, rather than the old references
-                        tempHB.barContainer = clusters.BLC.HealthbarRootFind("ShrunkenRoot").GetComponent<RectTransform>();
-                        tempHB.currentHealthText = clusters.BLC.HealthbarRootFind("Slash/CurrentHealthText").GetComponent<HGTextMeshProUGUI>();//cannot do this until all HGTextMeshProUGUI components added
-                        tempHB.fullHealthText = clusters.BLC.HealthbarRootFind("Slash/FullHealthText").GetComponent<HGTextMeshProUGUI>();//cannot do this until all HGTextMeshProUGUI components added
-                        //HealthBar temp = item.gameObject.AddComponent<HealthBar>();
-                        //temp.style = Resources.Load<HealthBarStyle>("ScriptableObject/HUDHealthBar");//PLS WORK
-                        //temp.style = oblc.transform.Find("BarRoots/HealthbarRoot").GetComponent<HealthBar>().style;
+                        customHB.barContainer = D1_HealthbarRoot.Find("ShrunkenRoot").GetComponent<RectTransform>();
+                        customHB.currentHealthText = D1_HealthbarRoot.Find("Slash/CurrentHealthText").GetComponent<HGTextMeshProUGUI>();//cannot do this until all HGTextMeshProUGUI components added
+                        customHB.fullHealthText = D1_HealthbarRoot.Find("Slash/FullHealthText").GetComponent<HGTextMeshProUGUI>();//cannot do this until all HGTextMeshProUGUI components added
+                        //customHB.style = Resources.Load<HealthBarStyle>("ScriptableObject/HUDHealthBar");//PLS WORK
+                        
+                        customHB.style = BLC.getHealthbarRoot().GetComponent<HealthBar>().style;
+                        
+                        item.SetActive(true);   //re-enable, Healthbar should call awake now.
+                        //Tell games's HUD component about new reference
+                        gameHud.healthBar = customHB;
                     }
 
                     {   //LevelDisplayCluster
                         {   //LevelDisplayRoot
                             {   //ValueText
-                                clusters.BLC.processComponent(clusters.BLC.getLevelDisplayRoot(), "ValueText", "BarRoots/LevelDisplayCluster/LevelDisplayRoot/ValueText", "Processing ValueText");
+                                HGTextMeshProUGUI HGTMP = BLC.CopyHGTMPvalues(D1_LevelDisplayRoot, BLC.getLevelDisplayRoot(), "ValueText", "ValueText", "Processing ValueText");
                             }
                             {   //PrefixText
-                                clusters.BLC.processComponent(clusters.BLC.getLevelDisplayRoot(), "PrefixText", "BarRoots/LevelDisplayCluster/LevelDisplayRoot/PrefixText", "Processing PrefixText");
+                                HGTextMeshProUGUI HGTMP = BLC.CopyHGTMPvalues(D1_LevelDisplayRoot, BLC.getLevelDisplayRoot(), "PrefixText", "PrefixText", "Processing PrefixText");
                             }
-                            clusters.BLC.setItem(clusters.BLC.getLevelDisplayRoot().gameObject, "Processing LevelDisplayRoot");
-                            LevelText tempLT = util.Component.Add(clusters.BLC.getItem(), clusters.BLC.OriginalFind("BarRoots/LevelDisplayCluster/LevelDisplayRoot").GetComponent<LevelText>());
-                            tempLT.targetText = clusters.BLC.LevelDisplayRootFind("ValueText").GetComponent<HGTextMeshProUGUI>();
+                            GameObject item = D1_LevelDisplayRoot.gameObject;
+                            LevelText customLT = util.Component.Add(item, BLC.getLevelDisplayRoot().GetComponent<LevelText>());
+                            customLT.targetText = D1_LevelDisplayRoot.Find("ValueText").GetComponent<HGTextMeshProUGUI>();
+
+                            //set hud ref
+                            gameHud.levelText = customLT;
                         }
 
                         {   //BuffDisplayRoot
-                            clusters.BLC.setItem(clusters.BLC.getBuffDisplayRoot(), "Processing BuffDisplayRoot");
-                            util.Component.Add(clusters.BLC.getItem(), clusters.BLC.OriginalFind("BarRoots/LevelDisplayCluster/BuffDisplayRoot").GetComponent<BuffDisplay>());
+                            util.Log.ConsoleMessage("Processing BuffDisplayRoot.");
+
+                            GameObject item = D1_BuffDisplayRoot.gameObject;
+                            item.SetActive(false);
+                            BuffDisplay customBD = util.Component.Add(item, BLC.getBuffDisplayRoot().GetComponent<BuffDisplay>());
+                            customBD.buffIconPrefab = Resources.Load<GameObject>("Prefabs/BuffIcon");
+                            util.Log.ConsoleMessage("Processing attempted. BuffDisplay: " + customBD.ToString());
+                            if (customBD.buffIconPrefab != null)
+                                util.Log.ConsoleMessage("BD.style Resource Loading: " + customBD.buffIconPrefab.ToString());
+                            else
+                            {
+                                customBD.buffIconPrefab = BLC.getBuffDisplayRoot().GetComponent<BuffDisplay>().buffIconPrefab;
+                                util.Log.ConsoleMessage("BD.style Copy from old: " + customBD.buffIconPrefab.ToString());
+                            }
+                            item.SetActive(true);
+                            //set hud ref
+                            gameHud.buffDisplay = customBD;
                         }
                         
                         {   //ExpBarRoot
-                            clusters.BLC.setItem(clusters.BLC.getExpBarRoot(), "Processing ExpBarRoot");
-                            ExpBar tempExpBar = util.Component.Add(clusters.BLC.getItem(), clusters.BLC.OriginalFind("BarRoots/LevelDisplayCluster/ExpBarRoot").GetComponent<ExpBar>());
-                            tempExpBar.fillRectTransform = clusters.BLC.ExpBarRootFind("ShrunkenRoot/FillPanel").GetComponent<RectTransform>();
+                            GameObject item = D1_ExpBarRoot.gameObject;
+                            ExpBar customEB = util.Component.Add(item, BLC.getExpBarRoot().GetComponent<ExpBar>());
+                            customEB.fillRectTransform = D1_ExpBarRoot.Find("ShrunkenRoot/FillPanel").GetComponent<RectTransform>();
+
+                            //set hud ref
+                            gameHud.expBar = customEB;
                         }
                     }
 
@@ -96,6 +139,9 @@ namespace UIOverhaul {
                     //finally Properly Destroy old cluster
                     UnityEngine.Object.DestroyImmediate(clusters.BLC.getOriginal().gameObject);
                     UIOverhaul.Logger.LogMessage("Old Cluster Deleted Successfully.");
+
+                    //assign to scale controller
+                    gameHudScaleController.rectTransforms[0] = D1_BLC.GetComponent<RectTransform>();
                 }
             }
         }
