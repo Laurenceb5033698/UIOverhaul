@@ -68,6 +68,15 @@ namespace UIOverhaul {
                 }
                 return target;
             }
+
+            public static void Modify(this GameObject game, RectTransform duplicate){
+                
+                foreach (PropertyInfo x in typeof(RectTransform).GetProperties()){
+                    if (x.CanWrite){
+                        x.SetValue(game.GetComponent<RectTransform>(), x.GetValue(duplicate));
+                    }
+                }
+            }
         }
 
         public static class Log {

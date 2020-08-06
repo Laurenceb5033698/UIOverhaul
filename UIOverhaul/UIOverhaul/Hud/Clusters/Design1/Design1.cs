@@ -1,6 +1,7 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System.Reflection;
+using R2API.Utils;
 using RoR2;
 using RoR2.UI;
 using System;
@@ -106,23 +107,7 @@ namespace UIOverhaul {
                         }
 
                         {   //BuffDisplayRoot
-                            util.Log.ConsoleMessage("Processing BuffDisplayRoot.");
-
-                            GameObject item = D1_BuffDisplayRoot.gameObject;
-                            item.SetActive(false);
-                            BuffDisplay customBD = util.Component.Add(item, BLC.getBuffDisplayRoot().GetComponent<BuffDisplay>());
-                            customBD.buffIconPrefab = Resources.Load<GameObject>("Prefabs/BuffIcon");
-                            util.Log.ConsoleMessage("Processing attempted. BuffDisplay: " + customBD.ToString());
-                            if (customBD.buffIconPrefab != null)
-                                util.Log.ConsoleMessage("BD.style Resource Loading: " + customBD.buffIconPrefab.ToString());
-                            else
-                            {
-                                customBD.buffIconPrefab = BLC.getBuffDisplayRoot().GetComponent<BuffDisplay>().buffIconPrefab;
-                                util.Log.ConsoleMessage("BD.style Copy from old: " + customBD.buffIconPrefab.ToString());
-                            }
-                            item.SetActive(true);
-                            //set hud ref
-                            gameHud.buffDisplay = customBD;
+                            SetupCustomBuffDisplay(D1_BuffDisplayRoot);
                         }
                         
                         {   //ExpBarRoot
@@ -139,10 +124,49 @@ namespace UIOverhaul {
                     //finally Properly Destroy old cluster
                     UnityEngine.Object.DestroyImmediate(clusters.BLC.getOriginal().gameObject);
                     UIOverhaul.Logger.LogMessage("Old Cluster Deleted Successfully.");
+                    //need to delete custom item that's finished it's job
+                    UnityEngine.Object.DestroyImmediate(D1_BuffDisplayRoot.gameObject);
 
                     //assign to scale controller
                     gameHudScaleController.rectTransforms[0] = D1_BLC.GetComponent<RectTransform>();
                 }
+
+                private static void SetupCustomBuffDisplay(Transform D1_BDR)
+                {   //BuffDisplayRoot
+                    util.Log.ConsoleMessage("Processing BuffDisplayRoot.");
+                    //preserver Old Gameobject and use it for ourselves.
+
+                    //get old GameObject, unparent it, and use as base for our custom hud.
+                    Transform baseBD = BLC.getBuffDisplayRoot();
+                    //baseBD.SetParent(null);
+                    //get and unparent custom hud buffdisplay
+                    baseBD.SetParent(D1_BDR.parent, false);
+                    //get our rect Transform values and copy across to replace old values
+                    util.Component.Modify(baseBD.gameObject, D1_BDR.GetComponent<RectTransform>());
+                    D1_BDR.SetParent(null);
+
+
+                    ///The Following is bad. Cant do this as private List buffIcons is serialized (networked) and we cant set it ourselves
+                    /// TODO: try using reflection to find where this field is set from.
+                    //GameObject item = D1_BDR.gameObject;
+                    //item.SetActive(false);
+                    //BuffDisplay customBD = util.Component.Add(item, BLC.getBuffDisplayRoot().GetComponent<BuffDisplay>());
+                    //customBD.buffIconPrefab = Resources.Load<GameObject>("Prefabs/BuffIcon");
+                    //util.Log.ConsoleMessage("Processing attempted. BuffDisplay: " + customBD.ToString());
+                    //if (customBD.buffIconPrefab != null)
+                    //{
+                    //    util.Log.ConsoleMessage("BD.style Resource Loading: " + customBD.buffIconPrefab.ToString());
+                    //}
+                    //else
+                    //{
+                    //    customBD.buffIconPrefab = BLC.getBuffDisplayRoot().GetComponent<BuffDisplay>().buffIconPrefab;
+                    //    util.Log.ConsoleMessage("BD.style Copy from old: " + customBD.buffIconPrefab.ToString());
+                    //}
+                    //item.SetActive(true);
+                    //set hud ref
+                    //gameHud.buffDisplay = customBD;
+                }
+
             }
         }
     }
